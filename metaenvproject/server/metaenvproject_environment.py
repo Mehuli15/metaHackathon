@@ -85,9 +85,14 @@ class MetaenvprojectEnvironment(Environment):
         # ---------------------------
         # REWARD FUNCTION
         # ---------------------------
-        efficiency_reward = self.efficiency * 2.0
+
+        # Normalize
+        efficiency_norm = self.efficiency / 10
+        energy_norm = self.energy_consumption / 10
+
+        efficiency_reward = efficiency_norm * 2.0
         defect_penalty = self.defect_rate * 3.0
-        energy_penalty = self.energy_consumption * 1.5
+        energy_penalty = energy_norm * 1.5
 
         # Stability bonus
         stability_bonus = 0.0
@@ -96,7 +101,13 @@ class MetaenvprojectEnvironment(Environment):
 
         reward = efficiency_reward - defect_penalty - energy_penalty + stability_bonus
 
-        done = self._state.step_count >= 50
+        # Extra penalty for extreme values
+        if self.temperature > 90 or self.speed > 900:
+            reward -= 1.0
+        done = (
+            self._state.step_count >= 50
+            or self.defect_rate < 0.05
+        )
 
         return MetaenvprojectObservation(
             temperature=self.temperature,
