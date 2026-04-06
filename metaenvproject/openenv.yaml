@@ -1,0 +1,18 @@
+id: metaenvproject
+name: Manufacturing Optimization Environment
+description: |
+  A real-world simulation where an AI agent controls temperature and speed
+  to optimize efficiency, reduce defects, and minimize energy consumption.
+
+version: 1.0
+
+endpoints:
+  reset: /reset
+  step: /step
+  state: /state
+
+tasks_endpoint: /tasks
+grader_endpoint: /grade
+
+observation_model: MetaenvprojectObservation
+action_model: MetaenvprojectAction
