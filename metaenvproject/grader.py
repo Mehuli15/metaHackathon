@@ -1,31 +1,48 @@
 def grade(task, observation):
     score = 0.0
+    total = 0
 
-    target = task["target"]
+    targets = task["targets"]
 
     # ---------------------------
-    # DEFECT SCORE
+    # TEMPERATURE (max_temp)
     # ---------------------------
-    if "defect_rate" in target:
-        diff = abs(observation.defect_rate - target["defect_rate"])
+    if "max_temp" in targets:
+        total += 1
+        if observation.temperature <= targets["max_temp"]:
+            score += 1
+
+    # ---------------------------
+    # HEALTH (derived)
+    # health = 1 - defect_rate
+    # ---------------------------
+    if "min_health" in targets:
+        total += 1
+        health = 1 - observation.defect_rate
+        if health * 100 >= targets["min_health"]:
+            score += 1
+
+    # ---------------------------
+    # EFFICIENCY
+    # ---------------------------
+    if "efficiency" in targets:
+        total += 1
+        diff = abs(observation.efficiency - targets["efficiency"])
         score += max(0, 1 - diff)
 
     # ---------------------------
-    # EFFICIENCY SCORE
+    # ENERGY
     # ---------------------------
-    if "efficiency" in target:
-        diff = abs(observation.efficiency - target["efficiency"])
-        score += max(0, 1 - diff)
+    if "max_energy" in targets:
+        total += 1
+        if observation.energy_consumption <= targets["max_energy"]:
+            score += 1
 
     # ---------------------------
-    # ENERGY SCORE
+    # FINAL SCORE (0–1)
     # ---------------------------
-    if "energy_consumption" in target:
-        diff = abs(observation.energy_consumption - target["energy_consumption"])
-        score += max(0, 1 - diff)
+    if total == 0:
+        return 0.0
 
-    # Normalize score (0–1)
-    total_metrics = len(target)
-    final_score = score / total_metrics if total_metrics > 0 else 0
-
-    return min(max(final_score, 0), 1)
+    final_score = score / total
+    return round(final_score, 3)
