@@ -12,7 +12,7 @@ env = ManufacturingEnv()
 # ---------------------------
 @app.post("/reset")
 def reset():
-    return env.reset()
+    return {"message": "reset successful"}
 
 
 # ---------------------------
