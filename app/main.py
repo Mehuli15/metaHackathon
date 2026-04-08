@@ -1,3 +1,11 @@
+from fastapi import FastAPI
+from metaenvproject.server.metaenvproject_environment import MetaenvprojectEnvironment
+
+app = FastAPI()
+
+env = MetaenvprojectEnvironment()   # ✅ THIS WAS MISSING
+initialized = False                 # ✅ ALSO IMPORTANT
+
 @app.post("/openenv/reset")
 def reset():
     global initialized
@@ -23,7 +31,7 @@ def state():
 @app.post("/openenv/step")
 def step(action: dict):
     if not initialized:
-        return {"error": "Call /reset first"}
+        return {"error": "Call /openenv/reset first"}
 
     obs = env.step(type("Action", (), action))
     return {
