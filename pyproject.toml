@@ -1,0 +1,9 @@
+[project]
+name = "metaHackathon"
+version = "0.1.0"
+description = "Manufacturing environment simulation"
+requires-python = ">=3.10"
+dependencies = ["openenv-core>=0.2.0"]
+
+[project.scripts]
+server = "server.app:main"
