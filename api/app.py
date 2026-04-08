@@ -7,17 +7,23 @@ app = FastAPI()
 env = ManufacturingEnv()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 # ---------------------------
 # RESET
 # ---------------------------
 =======
 # ✅ REQUIRED for validator
+=======
+>>>>>>> 1b0114d (fix reset response format)
 @app.post("/openenv/reset")
 def openenv_reset():
     state = env.reset()
     return {
-        "state": state
+        "state": state,
+        "reward": 0,
+        "done": False,
+        "info": {}
     }
 
 # optional (keep yours also)
@@ -35,7 +41,7 @@ def step(action: dict):
     state, reward, done, info = env.step(action)
     return {
         "state": state,
-        "reward": reward,
+        "reward": reward,1
         "done": done,
         "info": info
     }
