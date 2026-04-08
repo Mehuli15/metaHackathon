@@ -2,13 +2,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from metaenvproject.server.metaenvproject_environment import MetaenvprojectEnvironment
-from metaenvproject.models import MetaenvprojectAction
 from metaenvproject.tasks import get_tasks
 from metaenvproject.grader import grade
 
 app = FastAPI()
 
 env = MetaenvprojectEnvironment()
+
+
+# ---------------------------
+# REQUEST MODEL
+# ---------------------------
+class ActionRequest(BaseModel):
+    temperature_change: float
+    speed_change: float
 
 
 # ---------------------------
@@ -23,8 +30,12 @@ def reset():
 # STEP
 # ---------------------------
 @app.post("/step")
-def step(action: MetaenvprojectAction):
-    return env.step(action)
+def step(action: ActionRequest):
+    action_dict = {
+        "temperature_change": action.temperature_change,
+        "speed_change": action.speed_change
+    }
+    return env.step(action_dict)
 
 
 # ---------------------------
@@ -32,7 +43,7 @@ def step(action: MetaenvprojectAction):
 # ---------------------------
 @app.get("/state")
 def state():
-    return env.state
+    return env.get_state()
 
 
 # ---------------------------
@@ -54,13 +65,20 @@ class GradeRequest(BaseModel):
 def grade_task(req: GradeRequest):
     tasks = get_tasks()
 
-    # find task
     task = next((t for t in tasks if t["id"] == req.task_id), None)
 
     if not task:
         return {"error": "Task not found"}
 
-    observation = env.reset()  # simulate one run
+    observation = env.reset()
     score = grade(task, observation)
 
     return {"score": score}
+
+
+# ---------------------------
+# HEALTH (IMPORTANT FOR HF)
+# ---------------------------
+@app.get("/health")
+def health():
+    return {"status": "ok"}
