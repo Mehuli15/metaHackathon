@@ -6,10 +6,22 @@ app = FastAPI()
 
 env = ManufacturingEnv()
 
+<<<<<<< HEAD
 
 # ---------------------------
 # RESET
 # ---------------------------
+=======
+# ✅ REQUIRED for validator
+@app.post("/openenv/reset")
+def openenv_reset():
+    state = env.reset()
+    return {
+        "state": state
+    }
+
+# optional (keep yours also)
+>>>>>>> 1d84ded (add openenv reset endpoint)
 @app.post("/reset")
 def reset():
     return env.reset()
