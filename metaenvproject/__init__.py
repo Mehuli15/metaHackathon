@@ -1,16 +1,11 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-#
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree.
+# Local testing version (OpenEnv client disabled)
 
-"""Metaenvproject Environment."""
+# ❌ Disabled because OpenEnv SDK is not installed locally
+# from .client import MetaenvprojectEnv
 
-from .client import MetaenvprojectEnv
 from .models import MetaenvprojectAction, MetaenvprojectObservation
 
 __all__ = [
     "MetaenvprojectAction",
     "MetaenvprojectObservation",
-    "MetaenvprojectEnv",
 ]

@@ -4,8 +4,12 @@
 from uuid import uuid4
 import pandas as pd
 
-from openenv.core.env_server.interfaces import Environment
-from openenv.core.env_server.types import State
+# Removed OpenEnv dependency for local testing
+
+class State:
+    def __init__(self, episode_id, step_count):
+        self.episode_id = episode_id
+        self.step_count = step_count
 
 try:
     from ..models import MetaenvprojectAction, MetaenvprojectObservation
@@ -13,7 +17,7 @@ except ImportError:
     from models import MetaenvprojectAction, MetaenvprojectObservation
 
 
-class MetaenvprojectEnvironment(Environment):
+class MetaenvprojectEnvironment:
 
     SUPPORTS_CONCURRENT_SESSIONS: bool = True
 

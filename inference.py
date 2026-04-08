@@ -91,21 +91,13 @@ def run_task(task):
             )
             break
 
-    # GET FINAL SCORE
-    score_res = requests.get(f"{API_BASE_URL}/score?task_name={task}").json()
-    score = score_res.get("score", 0.0)
-
-    # Clamp score [0,1]
-    score = max(0.0, min(1.0, score))
-
-    success = score > 0.3
+    success = len(rewards) > 0 and rewards[-1] > 0
 
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
 
     print(
         f"[END] success={str(success).lower()} "
         f"steps={step} "
-        f"score={score:.2f} "
         f"rewards={rewards_str}"
     )
 

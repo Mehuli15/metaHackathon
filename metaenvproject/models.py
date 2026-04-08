@@ -1,22 +1,12 @@
-# Copyright (c) Meta Platforms, Inc.
-# Modified for custom OpenEnv project
+# Data models for Metaenvproject (Local FastAPI version)
 
-"""
-Data models for the Metaenvproject Environment.
-
-This environment simulates a manufacturing system where an agent
-controls temperature and speed to optimize efficiency, defects,
-and energy consumption.
-"""
-
-from openenv.core.env_server.types import Action, Observation
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 
 # ---------------------------
 # ACTION MODEL
 # ---------------------------
-class MetaenvprojectAction(Action):
+class MetaenvprojectAction(BaseModel):
     """
     Action taken by the agent.
     Controls how temperature and speed change.
@@ -33,7 +23,7 @@ class MetaenvprojectAction(Action):
 # ---------------------------
 # OBSERVATION MODEL
 # ---------------------------
-class MetaenvprojectObservation(Observation):
+class MetaenvprojectObservation(BaseModel):
     """
     Observation returned by the environment.
     Represents current system state.
