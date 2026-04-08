@@ -1,23 +1,83 @@
 from fastapi import FastAPI
-from environment import ManufacturingEnv
+from pydantic import BaseModel
+
+from metaenvproject.server.metaenvproject_environment import MetaenvprojectEnvironment
+from metaenvproject.tasks import get_tasks
+from metaenvproject.grader import grade
 
 app = FastAPI()
 
-env = ManufacturingEnv()
+env = MetaenvprojectEnvironment()
 
+
+# ---------------------------
+# ACTION MODEL
+# ---------------------------
+class ActionRequest(BaseModel):
+    temperature_change: float
+    speed_change: float
+
+
+# ---------------------------
+# RESET
+# ---------------------------
 @app.post("/reset")
 def reset():
-    state = env.reset()
-    return {
-        "state": state
-    }
+    return env.reset()
 
+
+# ---------------------------
+# STEP
+# ---------------------------
 @app.post("/step")
-def step(action: dict):
-    state, reward, done, info = env.step(action)
-    return {
-        "state": state,
-        "reward": reward,
-        "done": done,
-        "info": info
-    }
+def step(action: ActionRequest):
+    return env.step({
+        "temperature_change": action.temperature_change,
+        "speed_change": action.speed_change
+    })
+
+
+# ---------------------------
+# STATE
+# ---------------------------
+@app.get("/state")
+def state():
+    return env.get_state()
+
+
+# ---------------------------
+# TASKS
+# ---------------------------
+@app.get("/tasks")
+def tasks():
+    return get_tasks()
+
+
+# ---------------------------
+# GRADER
+# ---------------------------
+class GradeRequest(BaseModel):
+    task_id: str
+
+
+@app.post("/grade")
+def grade_task(req: GradeRequest):
+    tasks = get_tasks()
+
+    task = next((t for t in tasks if t["id"] == req.task_id), None)
+
+    if not task:
+        return {"error": "Task not found"}
+
+    observation = env.reset()
+    score = grade(task, observation)
+
+    return {"score": score}
+
+
+# ---------------------------
+# HEALTH (IMPORTANT)
+# ---------------------------
+@app.get("/health")
+def health():
+    return {"status": "ok"}
